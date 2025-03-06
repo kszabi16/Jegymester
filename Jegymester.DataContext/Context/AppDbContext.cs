@@ -20,9 +20,11 @@ namespace Jegymester.DataContext.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>()
-                .Property(u => u.Role)
-                .HasConversion<string>(); // Enum értékeket stringként tárolja
+            base.OnModelCreating(modelBuilder);
+
+            
+            
         }
+
     }
 }
