@@ -36,6 +36,9 @@ namespace Jegymester.DataContext.Context
                 .WithMany(u => u.Tickets)
                 .HasForeignKey(t => t.UserId)
                 .IsRequired(false);
+            modelBuilder.Entity<Screening>()
+            .HasIndex(s => s.MovieId)
+            .IsUnique(false);
 
         }
 

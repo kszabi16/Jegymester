@@ -12,9 +12,8 @@ namespace Jegymester.DataContext.Entities
         public string Name { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-        public string Password { get; set; } // Jelszó hash elkészítés?? idk mi az
+        public string PasswordHash { get; set; }
         public Role Role { get; set; } = Role.RegularUser; // Alapértelmezett érték: RegularUser
-
         public List<Ticket> Tickets { get; set; }
     }
 }

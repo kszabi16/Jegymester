@@ -8,68 +8,65 @@ using Jegymester.DataContext.Dtos;
 using Microsoft.EntityFrameworkCore;
 using Jegymester.DataContext.Context;
 using System.Threading.Channels;
+using AutoMapper;
 
 namespace Jegymester.Services
 {
+    public interface ITicketService
+    {
+        Task<TicketDto?> BuyTicket(CreateTicketDto dto);
+        Task<List<TicketDto>> GetUserTickets(int userId);
+        Task<bool> CancelTicket(int ticketId, int userId);
+    }
     public class TicketService
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public TicketService(AppDbContext context)
+        public TicketService(AppDbContext context,IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<TicketDto?> BuyTicket(CreateTicketDto dto)
+        //public async Task<TicketDto?> BuyTicket(CreateTicketDto dto)
+        //{
+        //    var screening = await _context.Screenings.FindAsync(dto.ScreeningId);
+        //    if (screening == null)
+        //    {
+        //        throw new Exception("Nem létezik ilyen vetítés");
+        //    }
+        //    var ticket = _mapper.Map<Ticket>(dto);
+        //    _context.Tickets.Add(ticket);
+        //    await _context.SaveChangesAsync();
+        //    return _mapper.Map<TicketDto>(ticket);
+        //}
+
+        public async Task<TicketDto?> BuyTicketForCustomer(CreateTicketDto dto)
         {
             var screening = await _context.Screenings.FindAsync(dto.ScreeningId);
-            if (screening == null) return null;
-
-            var ticket = new Ticket
+            if (screening == null)
             {
-                ScreeningId = dto.ScreeningId,
-                UserId = dto.UserId,
-                BuyerEmail = dto.BuyerEmail,
-                BuyerPhone = dto.BuyerPhone
-            };
+                throw new Exception("Nem létezik ilyen vetítés");
+            }
+
+            var ticket = _mapper.Map<Ticket>(dto);
 
             _context.Tickets.Add(ticket);
             await _context.SaveChangesAsync();
 
-            return new TicketDto
-            {
-                Id = ticket.Id,
-                ScreeningId = ticket.ScreeningId,
-                UserId = ticket.UserId,
-                BuyerEmail = dto.BuyerEmail,
-                BuyerPhone = dto.BuyerPhone
-            };
+            return _mapper.Map<TicketDto>(ticket);
         }
 
-        public async Task<List<TicketDto>> GetUserTickets(int userId)
+        public async Task<List<TicketDto>> GetTicketsForScreening(int screeningId)
         {
-            return await _context.Tickets
-                .Where(t => t.UserId == userId)
-                .Select(t => new TicketDto
-                {
-                    Id = t.Id,
-                    ScreeningId = t.ScreeningId,
-                    UserId = t.UserId,
-                }).ToListAsync();
+            var tickets = await _context.Tickets
+             .Where(t => t.ScreeningId == screeningId)
+             .ToListAsync();
+
+            return _mapper.Map<List<TicketDto>>(tickets);
         }
 
-        public async Task<bool> CancelTicket(int ticketId, int userId)
-        {
-            var ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId && t.UserId == userId);
-            if (ticket == null) return false;
-
-            var screening = await _context.Screenings.FindAsync(ticket.ScreeningId);
-            if (screening == null || screening.StartTime < DateTime.Now.AddHours(4))
-                Console.WriteLine("Már nem lehet törölni"); 
-
-            _context.Tickets.Remove(ticket);
-            await _context.SaveChangesAsync();
-            return true;
-        }
+       
     }
 }

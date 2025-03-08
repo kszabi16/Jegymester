@@ -21,7 +21,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<MovieService>();
 builder.Services.AddScoped<ScreeningService>();
 builder.Services.AddScoped<TicketService>();
-builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 
 
