@@ -21,4 +21,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.3.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Jegymester.DataContext\Jegymester.DataContext.csproj" />
+  </ItemGroup>
+
 </Project>

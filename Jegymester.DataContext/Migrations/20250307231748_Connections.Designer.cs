@@ -12,10 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jegymester.DataContext.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250306180846_Initial")]
-    partial class Initial
-
-
+    [Migration("20250307231748_Connections")]
+    partial class Connections
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -96,6 +94,9 @@ namespace Jegymester.DataContext.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsValidated")
+                        .HasColumnType("bit");
+
                     b.Property<int>("ScreeningId")
                         .HasColumnType("int");
 
@@ -135,8 +136,9 @@ namespace Jegymester.DataContext.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("int");
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -157,18 +159,28 @@ namespace Jegymester.DataContext.Migrations
             modelBuilder.Entity("Jegymester.DataContext.Entities.Ticket", b =>
                 {
                     b.HasOne("Jegymester.DataContext.Entities.Screening", "Screening")
-                        .WithMany()
+                        .WithMany("Tickets")
                         .HasForeignKey("ScreeningId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Jegymester.DataContext.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("Tickets")
                         .HasForeignKey("UserId");
 
                     b.Navigation("Screening");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Jegymester.DataContext.Entities.Screening", b =>
+                {
+                    b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("Jegymester.DataContext.Entities.User", b =>
+                {
+                    b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618
         }

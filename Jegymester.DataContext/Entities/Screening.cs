@@ -11,7 +11,9 @@ namespace Jegymester.DataContext.Entities
         public int Id { get; set; }
         public DateTime StartTime { get; set; }
         public int MovieId { get; set; }
-        public Movie Movie { get; set; } = null!;
+        public Movie Movie { get; set; }
         public string Location { get; set; }
+
+        public List<Ticket> Tickets { get; set; }
     }
 }

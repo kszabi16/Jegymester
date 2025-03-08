@@ -34,12 +34,16 @@ namespace Jegymester.DataContext.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DurationMinutes")
-                        .HasColumnType("int");
+                    b.Property<string>("Director")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Genre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Length")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -70,7 +74,8 @@ namespace Jegymester.DataContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MovieId");
+                    b.HasIndex("MovieId")
+                        .IsUnique();
 
                     b.ToTable("Screenings");
                 });
@@ -87,9 +92,12 @@ namespace Jegymester.DataContext.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("BuyerPhoneNumber")
+                    b.Property<string>("BuyerPhone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsValidated")
+                        .HasColumnType("bit");
 
                     b.Property<int>("ScreeningId")
                         .HasColumnType("int");
@@ -130,8 +138,9 @@ namespace Jegymester.DataContext.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("int");
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -141,8 +150,8 @@ namespace Jegymester.DataContext.Migrations
             modelBuilder.Entity("Jegymester.DataContext.Entities.Screening", b =>
                 {
                     b.HasOne("Jegymester.DataContext.Entities.Movie", "Movie")
-                        .WithMany()
-                        .HasForeignKey("MovieId")
+                        .WithOne("Screening")
+                        .HasForeignKey("Jegymester.DataContext.Entities.Screening", "MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -152,18 +161,34 @@ namespace Jegymester.DataContext.Migrations
             modelBuilder.Entity("Jegymester.DataContext.Entities.Ticket", b =>
                 {
                     b.HasOne("Jegymester.DataContext.Entities.Screening", "Screening")
-                        .WithMany()
+                        .WithMany("Tickets")
                         .HasForeignKey("ScreeningId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Jegymester.DataContext.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("Tickets")
                         .HasForeignKey("UserId");
 
                     b.Navigation("Screening");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Jegymester.DataContext.Entities.Movie", b =>
+                {
+                    b.Navigation("Screening")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Jegymester.DataContext.Entities.Screening", b =>
+                {
+                    b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("Jegymester.DataContext.Entities.User", b =>
+                {
+                    b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618
         }
