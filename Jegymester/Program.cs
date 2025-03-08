@@ -1,6 +1,8 @@
 using Jegymester.DataContext.Context;
+using Microsoft.OpenApi.Models;
+using Jegymester.Services;
 using Microsoft.EntityFrameworkCore;
-using System;
+
 
 
    
@@ -14,6 +16,22 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer("Server=(localdb)\\Local;Database=JegymesterDB;Trusted_Connection=True;TrustServerCertificate=True;"));
 
 
+
+
+builder.Services.AddScoped<MovieService>();
+builder.Services.AddScoped<ScreeningService>();
+builder.Services.AddScoped<TicketService>();
+builder.Services.AddScoped<UserService>();
+
+
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "JegyMesterApp API", Version = "v1" });
+});
+
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
 builder.Services.AddEndpointsApiExplorer();
 
 
@@ -23,7 +41,7 @@ var app = builder.Build();
  if (app.Environment.IsDevelopment())
     {
          app.UseSwagger();
-         app.UseSwaggerUI();
+         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "JegyMesterApp API v1"));
     }
 
 app.UseHttpsRedirection();

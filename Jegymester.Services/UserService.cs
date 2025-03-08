@@ -10,8 +10,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jegymester.Services
 {
-    public class UserService
-    {
+    public class UserService 
+    { 
+         public interface IUserService
+         {
+                Task<UserDto> RegisterAsync(RegisterDto userDto);
+                Task<string> LoginAsync(LoginDto userDto);
+        
+        
+       
+         }
+    
         private readonly AppDbContext _context;
 
         public UserService(AppDbContext context)
@@ -19,7 +28,7 @@ namespace Jegymester.Services
             _context = context;
         }
 
-        public async Task<UserDto?> RegisterUser(RegisterUserDto dto)
+        public async Task<UserDto?> RegisterUser(RegisterDto dto)
         {
             if (_context.Users.Any(u => u.Email == dto.Email))
             {

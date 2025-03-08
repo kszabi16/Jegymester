@@ -16,7 +16,7 @@ namespace Jegymester.DataContext.Dtos
         public string Role { get; set; } 
     }
 
-    public class RegisterUserDto
+    public class RegisterDto
     {
         public string Name { get; set; }
         public string Email { get; set; }
