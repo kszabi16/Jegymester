@@ -15,11 +15,10 @@ namespace Jegymester.Services
    
          public interface IUserService
          {
-                Task<UserDto> Register(RegisterDto dto);
-                Task<UserDto> Login(LoginDto dto);
-        //Task<UserDto> Update(int userId, string email, string phone);
+                Task<UserDto?> Register(RegisterDto dto);
+                Task<UserDto?> Login(LoginDto dto);
                 Task<List<Ticket>> GetUserTickets(int userId);
-                //Task<TicketDelete> CancelTicket(int ticketId, int userId);
+                Task<TicketDelete> CancelTicket(int ticketId, int userId);
 
 
 
@@ -62,6 +61,7 @@ namespace Jegymester.Services
             }
 
             return _mapper.Map<UserDto>(user);
+            
         }
         private string HashPassword(string password)
         {
@@ -83,33 +83,33 @@ namespace Jegymester.Services
 
             return user.Tickets;
         }
-        //public async Task<TicketDelete> CancelTicket(int ticketId, int userId)
-        //{
-        //    if (userId == 0)
-        //    {
-        //        return TicketDelete.NotLoggedin;
-        //    }
+        public async Task<TicketDelete> CancelTicket(int ticketId, int userId)
+        {
+            if (userId == 0)
+            {
+                return TicketDelete.NotLoggedIn;
+            }
 
-        //    var ticket = await _context.Tickets
-        //        .Include(t => t.Screening)
-        //        .FirstOrDefaultAsync(t => t.Id == ticketId);
+            var ticket = await _context.Tickets
+                .Include(t => t.Screening)
+                .FirstOrDefaultAsync(t => t.Id == ticketId);
 
-        //    if (ticket == null)
-        //        return TicketDelete.TicketNotFound;
+            if (ticket == null)
+                return TicketDelete.TicketNotFound;
 
-        //    // Ellenőrizzük, hogy a jegy a felhasználóhoz tartozik
-        //    bool isOwner = (ticket.UserId == userId) || (ticket.UserId == null);
-        //    if (!isOwner)
-        //        return TicketDelete.NotOwner;
+            // Ellenőrizzük, hogy a jegy a felhasználóhoz tartozik
+            bool isOwner = (ticket.UserId == userId) || (ticket.UserId == null);
+            if (!isOwner)
+                return TicketDelete.NotOwner;
 
-        //    // Ellenőrizzük, hogy a vetítés legalább 4 órára van-e
-        //    if (ticket.Screening.StartTime < DateTime.UtcNow.AddHours(4))
-        //        return TicketDelete.ScreeningTooSoon;
+            // Ellenőrizzük, hogy a vetítés legalább 4 órára van-e
+            if (ticket.Screening.StartTime < DateTime.UtcNow.AddHours(4))
+                return TicketDelete.ScreeningTooSoon;
 
-        //    _context.Tickets.Remove(ticket);
-        //    await _context.SaveChangesAsync();
-        //    return TicketDelete.Success;
+            _context.Tickets.Remove(ticket);
+            await _context.SaveChangesAsync();
+            return TicketDelete.Success;
 
-        //}
+        }
     }
 }

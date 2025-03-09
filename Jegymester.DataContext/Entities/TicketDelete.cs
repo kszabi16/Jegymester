@@ -11,6 +11,7 @@ namespace Jegymester.DataContext.Entities
         Success,
         TicketNotFound,
         NotOwner,
-        ScreeningTooSoon
+        ScreeningTooSoon,
+        NotLoggedIn
     }
 }

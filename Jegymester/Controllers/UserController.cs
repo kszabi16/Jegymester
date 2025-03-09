@@ -18,7 +18,7 @@ namespace Jegymester.Controllers
             _userService = userService;
         }
 
-        [HttpPost("register")]
+        [HttpPut("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto userDto)
         {
             try
@@ -33,7 +33,7 @@ namespace Jegymester.Controllers
 
         }
 
-        [HttpPost("login")]
+        [HttpPut("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDto userDto)
         {
             try
@@ -60,7 +60,7 @@ namespace Jegymester.Controllers
         //        return BadRequest(ex.Message);
         //    }
         //}
-        [HttpPost("list tickets")]
+        [HttpPost("List Tickets")]
 
         public async Task<IActionResult> GetUserTickets([FromBody] int userId)
         {
@@ -90,6 +90,22 @@ namespace Jegymester.Controllers
         //        _ => StatusCode(500, "Ismeretlen hiba történt.")
         //    };
         //}
+        [HttpDelete("cancel ticket")]
+        public async Task<IActionResult> CancelTicket(int ticketId, int userId)
+        {
+            try
+            {
+                var result = await _userService.CancelTicket(ticketId, userId);
+                var eredmeny = "Sikerült a törlés";
+                return Ok(eredmeny);
+
+            }
+            catch (Exception)
+            {
+                var eredmeny = "Nem sikerült a törlés";
+                return BadRequest(eredmeny);
+            }
+        }
 
 
 

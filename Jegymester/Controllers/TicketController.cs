@@ -27,7 +27,7 @@ namespace Jegymester.Controllers
         //        return BadRequest(ex.Message);
         //    }
         //}
-        [HttpPost("get user tickets")]
+        [HttpGet("Get user tickets")]
         public async Task<IActionResult> GetUserTickets(int userId)
         {
             try
@@ -40,19 +40,7 @@ namespace Jegymester.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPost("cancel ticket")]
-        public async Task<IActionResult> CancelTicket(int ticketId, int userId)
-        {
-            try
-            {
-                var result = await _ticketService.CancelTicket(ticketId, userId);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+        
 
 
     }
